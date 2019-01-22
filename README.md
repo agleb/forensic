@@ -15,7 +15,7 @@ end
 
 Return the error tuple in the format:
 
-{:error, {\_\_MODULE\_\_, \_\_ENV_\_.function, \_\_ENV\_\_.current_vars, error}}
+{:error, {\_\_MODULE\_\_, \_\_ENV_\_.function, vars, error}}
 
 ## Usage
 
