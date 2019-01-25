@@ -1,5 +1,7 @@
 # Forensic
 
+[![Hex.pm](https://img.shields.io/hexpm/v/forensic.svg)](https://hex.pm/packages/forensic)
+
 Forensic.error is a macro, which returns the description of the error in the context, where it had occured.
 
 ## Installation
