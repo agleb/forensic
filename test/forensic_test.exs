@@ -41,4 +41,21 @@ defmodule ForensicTest do
 
     assert expected = sequence
   end
+
+  test "error loopback filtering" do
+    error = :it_is_here
+
+    assert {:error,
+            %Forensic.Errors{
+              history: [
+                %Forensic.Error{
+                  bindings: [],
+                  contents: :test,
+                  description: :no_description,
+                  function: "test error loopback filtering/1",
+                  module: ForensicTest
+                }
+              ]
+            }} == Forensic.error(:test)
+  end
 end

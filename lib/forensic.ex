@@ -5,7 +5,7 @@ defmodule Forensic do
 
   defmacro error(error, description \\ :no_description, contents \\ nil) do
     quote do
-      vars = binding()
+      vars = Keyword.delete(binding(), :error)
       cast = __ENV__
       {function_name, arity} = cast.function
 
