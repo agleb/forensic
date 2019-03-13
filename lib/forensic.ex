@@ -1,43 +1,46 @@
 defmodule Forensic do
   @moduledoc """
-  Simple macros for reporting pass-through errors in Elixir
+  Simple macro for reporting pass-through errors in Elixir
   """
 
-  @doc """
-  Attach a record to the error history with vars bindings
-  """
-  defmacro attach(error) do
+  defmacro error(error, description \\ :no_description, contents \\ nil) do
     quote do
       vars = binding()
       cast = __ENV__
       {function_name, arity} = cast.function
-      error_record = {__MODULE__, Atom.to_string(function_name) <> "/" <> to_string(arity), vars}
 
       case unquote(error) do
-        {:error, contents} when is_list(contents) ->
-          {:error, [error_record | contents]}
+        {:error, %Forensic.Errors{} = errors} ->
+          {:error,
+           Forensic.Errors.add(
+             errors,
+             unquote(description),
+             __MODULE__,
+             Atom.to_string(function_name) <> "/" <> to_string(arity),
+             vars,
+             unquote(contents)
+           )}
 
-        {:error, contents} when not is_list(contents) ->
-          {:error, [error_record, contents]}
+        {:error, the_error} ->
+          {:error,
+           Forensic.Errors.new(
+             unquote(description),
+             __MODULE__,
+             Atom.to_string(function_name) <> "/" <> to_string(arity),
+             vars,
+             the_error
+           )}
 
-        unrecognized ->
-          {:error, [error_record, unrecognized]}
+        error ->
+          {:error,
+           Forensic.Errors.new(
+             unquote(description),
+             __MODULE__,
+             Atom.to_string(function_name) <> "/" <> to_string(arity),
+             vars,
+             unquote(error)
+           )}
       end
-    end
-  end
-
-  @doc """
-  Return the error from it's context with vars bindings
-  """
-  defmacro error(error) do
-    quote do
-      vars = binding()
-      cast = __ENV__
-      {function_name, arity} = cast.function
-
-      {:error,
-       {__MODULE__, Atom.to_string(function_name) <> "/" <> to_string(arity), vars,
-        unquote(error)}}
     end
   end
 end
