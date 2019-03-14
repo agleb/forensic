@@ -1,4 +1,5 @@
 defmodule Forensic do
+
   @moduledoc """
   Simple macro for reporting pass-through errors in Elixir
   """
@@ -24,23 +25,30 @@ defmodule Forensic do
         {:error, the_error} ->
           {:error,
            Forensic.Errors.new(
-             unquote(description),
+             the_error,
              __MODULE__,
              Atom.to_string(function_name) <> "/" <> to_string(arity),
              vars,
-             the_error
+             unquote(description)
            )}
 
         error ->
           {:error,
            Forensic.Errors.new(
-             unquote(description),
+             unquote(error),
              __MODULE__,
              Atom.to_string(function_name) <> "/" <> to_string(arity),
              vars,
-             unquote(error)
+             unquote(description)
            )}
       end
+    end
+  end
+
+  defmacro last?(error_signature) do
+    quote do
+      {:error,
+       %Forensic.Errors{history: [%Forensic.Error{description: unquote(error_signature)} | _]}}
     end
   end
 end

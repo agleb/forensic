@@ -1,14 +1,14 @@
 defmodule ForensicTest do
   use ExUnit.Case
-  require Forensic
+  import Forensic
 
   test "basic sanity test" do
-    assert {:error, %Forensic.Errors{history: [%Forensic.Error{contents: :test}]}} =
+    assert {:error, %Forensic.Errors{history: [%Forensic.Error{description: :test}]}} =
              Forensic.error(:test)
   end
 
   test "{:error, error} detection" do
-    assert {:error, %Forensic.Errors{history: [%Forensic.Error{contents: :test}]}} =
+    assert {:error, %Forensic.Errors{history: [%Forensic.Error{description: :test}]}} =
              Forensic.error({:error, :test})
   end
 
@@ -50,12 +50,24 @@ defmodule ForensicTest do
               history: [
                 %Forensic.Error{
                   bindings: [],
-                  contents: :test,
-                  description: :no_description,
+                  contents: :no_description,
+                  description: :test,
                   function: "test error loopback filtering/1",
                   module: ForensicTest
                 }
               ]
             }} == Forensic.error(:test)
+  end
+
+  test "last?(error_signature) pattern matching" do
+    assert Forensic.last?(:test) = Forensic.error({:error, :test})
+  end
+
+  test "last?(error_signature) full-on scenario" do
+    with {:ok, result} <- Forensic.error({:error, :test}) do
+      {:ok, result}
+    else
+      Forensic.last?(:test) = error -> assert Forensic.last?(:test) = error
+    end
   end
 end
