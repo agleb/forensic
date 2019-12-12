@@ -9,8 +9,6 @@ Forensic is pass-through error protocol and a set of macros, aimed to sctructura
 
 Forensic's protocol fully follows `{:error, description}` ideology.
 
-WARNING: Do not forget to `import Forensic`! `require Forensic` won't work!
-
 `Forensic.error(error, description \\ :no_description, contents \\ nil)` will transparently incapsulate all {:error, description} or even any arbitary error given.
 
 ## Installation
